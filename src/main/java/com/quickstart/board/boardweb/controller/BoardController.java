@@ -1,6 +1,7 @@
 package com.quickstart.board.boardweb.controller;
 
 import com.quickstart.board.boardweb.domain.Board;
+import com.quickstart.board.boardweb.domain.Search;
 import com.quickstart.board.boardweb.security.SecurityUser;
 import com.quickstart.board.boardweb.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,20 @@ public class BoardController {
     private BoardService boardService;
 
     @RequestMapping("/getBoardList")
-    public String getBoardList(Model model, Board board)
+    public String getBoardList(Model model, Search search)
     {
-        Page<Board> boardList = boardService.getBoardList(board);
+        if(search.getSearchCondition() == null)
+        {
+            search.setSearchCondition("TITLE");
+        }
+
+        if(search.getSearchKeyword() == null)
+        {
+            search.setSearchKeyword("");
+        }
+
+
+        Page<Board> boardList = boardService.getBoardList(search);
         model.addAttribute("boardList", boardList);
         return "board/getBoardList";
     }
@@ -61,5 +73,6 @@ public class BoardController {
         boardService.deleteBoard(board);
         return "forward:getBoardList";
     }
+
 
 }
